@@ -3,9 +3,10 @@
 ;; Copyright (C) 2018 Gong Qijian <gongqijian@gmail.com>
 
 ;; Author: Gong Qijian <gongqijian@gmail.com>
+;; URL: https://github.com/twlz0ne/nodenv.el
 ;; Created: 2018/06/30
 ;; Version: 0.1.0
-;; URL: https://github.com/twlz0ne/nodenv
+;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: node, environment, tools
 
 ;; This program is free software; you can redistribute it and/or modify
