@@ -1,4 +1,4 @@
-;;; nodenv.el ---  Emacs integration for nodenv -*- lexical-binding: t; -*-
+;;; nodenv.el ---  Integration with nodenv -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018 Gong Qijian <gongqijian@gmail.com>
 
@@ -122,10 +122,8 @@
   :lighter nodenv-mode-line-format
   :keymap nodenv-mode-map
   (if nodenv-mode
-      (progn
-        (nodenv-auto-set))
-    (progn
-      (nodenv-unset))))
+      (nodenv-auto-set)
+    (nodenv-unset)))
 
 (provide 'nodenv)
 
