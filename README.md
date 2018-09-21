@@ -1,3 +1,5 @@
+[![MELPA](https://melpa.org/packages/nodenv-badge.svg)](https://melpa.org/#/nodenv)
+
 ## nodenv.el
 
 Emacs integration for nodenv.
