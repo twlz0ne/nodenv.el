@@ -44,10 +44,14 @@
 
 ;;; Code:
 
+(require 'subr-x)
+
 (defgroup nodenv nil
   "Nodenv virtualenv integration."
   :group 'nodenv)
 
+(defvar nodenv-node-version nil "Local variable to specify node version.")
+(make-local-variable 'nodenv-node-version)
 
 (defcustom nodenv-mode-line-format
   '(:eval
@@ -91,13 +95,16 @@
 
 ;;;###autoload
 (defun nodenv-auto-set ()
-  (let* ((ver-file (nodenv-node-version-file))
-         (ver (if ver-file
-                  (string-trim
-                   (shell-command-to-string
-                    (format "head -n 1 %s" ver-file)) "\n")
-                (car (reverse (nodenv-versions))))))
-    (nodenv-set ver)))
+  "Auto detect node version."
+  (if nodenv-node-version
+      (nodenv-set nodenv-node-version)
+    (let* ((ver-file (nodenv-node-version-file))
+           (ver (if ver-file
+                    (string-trim
+                     (shell-command-to-string
+                      (format "head -n 1 %s" ver-file)) "\n")
+                  (car (reverse (nodenv-versions))))))
+      (nodenv-set ver))))
 
 ;;;###autoload
 (defun nodenv-unset ()
