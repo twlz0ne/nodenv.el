@@ -1,4 +1,5 @@
 [![MELPA](https://melpa.org/packages/nodenv-badge.svg)](https://melpa.org/#/nodenv)
+[![Build Status](https://travis-ci.com/twlz0ne/nodenv.el.svg?branch=master)](https://travis-ci.com/twlz0ne/nodenv.el)
 
 ## nodenv.el
 
