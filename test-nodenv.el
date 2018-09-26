@@ -47,40 +47,41 @@ Return project root."
   "Get newest version of node."
   (car (reverse (nodenv-versions))))
 
-(defun test-nodenv--get-version (file-name)
-  "Get node version of `FILE-NAME'."
+(defun test-nodenv--open-file (file-name &optional defer-p)
+  "Open file `FILE-NAME', return node version if `DEFER-P' is nil (the default)."
   (setq enable-local-variables :all)
   (find-file file-name)
   (js-mode)
-  (nodenv-mode)
-  (getenv "NODENV_VERSION"))
+  (unless defer-p
+    (nodenv-mode)
+    (getenv "NODENV_VERSION")))
 
 (ert-deftest test-nodenv-node-version-file-0 ()
   (let ((root (test-nodenv--make-project '(("test.js" . "\n")))))
     (should (equal (test-nodenv--newest-version)
-                   (test-nodenv--get-version (concat root "test.js"))))))
+                   (test-nodenv--open-file (concat root "test.js"))))))
 
 (ert-deftest test-nodenv-node-version-file-1 ()
   (let ((root (test-nodenv--make-project '(("test.js" . "\n")
                                            (".node-version" . "6.0.0")))))
     (should (equal "6.0.0"
-                   (test-nodenv--get-version (concat root "test.js"))))))
+                   (test-nodenv--open-file (concat root "test.js"))))))
 
 (ert-deftest test-nodenv-node-version-file-2 ()
   (let ((root (test-nodenv--make-project '(("test1.js" . "\n")
                                            (".node-version" . "6.0.0")
                                            ("src/test2.js" . "\n")
                                            ("src/.node-version" . "7.0.0")))))
-    (should (equal "6.0.0" (test-nodenv--get-version (concat root "test1.js"))))
-    (should (equal "7.0.0" (test-nodenv--get-version (concat root "src/test2.js"))))))
+    (should (equal "6.0.0" (test-nodenv--open-file (concat root "test1.js"))))
+    (should (equal "7.0.0" (test-nodenv--open-file (concat root "src/test2.js"))))))
 
 (ert-deftest test-nodenv-node-version-file-3 ()
   (let ((root (test-nodenv--make-project '(("foo/test1.js" . "\n")
                                            ("foo/.node-version" . "6.0.0")
                                            ("bar/test2.js" . "\n")
                                            ("bar/.node-version" . "7.0.0")))))
-    (should (equal "6.0.0" (test-nodenv--get-version (concat root "foo/test1.js"))))
-    (should (equal "7.0.0" (test-nodenv--get-version (concat root "bar/test2.js"))))))
+    (should (equal "6.0.0" (test-nodenv--open-file (concat root "foo/test1.js"))))
+    (should (equal "7.0.0" (test-nodenv--open-file (concat root "bar/test2.js"))))))
 
 (ert-deftest test-nodenv-local-version ()
   (let ((root (test-nodenv--make-project
@@ -90,8 +91,17 @@ Return project root."
                                                           "// Local Variables:\n"
                                                           "// nodenv-node-version: \"7.0.0\"\n"
                                                           "// End:\n"))))))
-    (should (equal "6.0.0" (test-nodenv--get-version (concat root "test-without-local-variable.js"))))
-    (should (equal "7.0.0" (test-nodenv--get-version (concat root "test-with-local-variable.js"))))))
+    ;; Use node version specified in .node-version
+    (should (equal "6.0.0" (test-nodenv--open-file (concat root "test-without-local-variable.js"))))
+
+    ;; Use node version specified by local variable
+    (add-hook 'hack-local-variables-hook
+              (lambda ()
+                (when nodenv-node-version
+                  (nodenv-mode)
+                  (should (equal "7.0.0" (nodenv-version))))))
+    (test-nodenv--open-file (concat root "test-with-local-variable.js") t)
+    ))
 
 (provide 'test-nodenv)
 
