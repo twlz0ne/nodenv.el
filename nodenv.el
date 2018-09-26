@@ -44,8 +44,6 @@
 
 ;;; Code:
 
-(require 'subr-x)
-
 (defgroup nodenv nil
   "Nodenv virtualenv integration."
   :group 'nodenv)
@@ -82,7 +80,7 @@
          (ver-file (concat curr-dir ".node-version")))
     (if (file-exists-p ver-file)
         ver-file
-      (let ((next-dir (file-name-directory (string-trim-right curr-dir "/"))))
+      (let ((next-dir (file-name-directory (replace-regexp-in-string "\\(?:\\/\\)\\'" "" curr-dir))))
         (when next-dir
           (nodenv-node-version-file next-dir))))))
 
@@ -100,9 +98,8 @@
       (nodenv-set nodenv-node-version)
     (let* ((ver-file (nodenv-node-version-file))
            (ver (if ver-file
-                    (string-trim
-                     (shell-command-to-string
-                      (format "head -n 1 %s" ver-file)) "\n")
+                    (replace-regexp-in-string
+                     "\\(?:\n\\)\\'" "" (shell-command-to-string (format "head -n 1 %s" ver-file)))
                   (car (reverse (nodenv-versions))))))
       (nodenv-set ver))))
 
