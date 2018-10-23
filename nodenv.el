@@ -80,14 +80,15 @@
   (completing-read "Nodenv: " (nodenv-versions)))
 
 (defun nodenv-node-version-file (&optional dir)
-  "Lookup `.node-version' from DIR or current folder"
-  (let* ((curr-dir (or dir (file-name-directory (buffer-file-name))))
-         (ver-file (concat curr-dir ".node-version")))
-    (if (file-exists-p ver-file)
-        ver-file
-      (let ((next-dir (file-name-directory (nodenv--trim-path-separator-r curr-dir))))
-        (when next-dir
-          (nodenv-node-version-file next-dir))))))
+  "Lookup `.node-version' from DIR or current folder."
+  (let ((curr-dir (or dir (file-name-directory (or (buffer-file-name) "")))))
+    (when curr-dir
+      (let ((ver-file (concat curr-dir ".node-version")))
+        (if (file-exists-p ver-file)
+            ver-file
+          (let ((next-dir (file-name-directory (nodenv--trim-path-separator-r curr-dir))))
+            (when next-dir
+              (nodenv-node-version-file next-dir))))))))
 
 ;;;###autoload
 (defun nodenv-set (version)

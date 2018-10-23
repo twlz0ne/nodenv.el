@@ -103,6 +103,10 @@ Return project root."
     (test-nodenv--open-file (concat root "test-with-local-variable.js") t)
     ))
 
+(ert-deftest test-nodenv-get-version-in-temp-buffer ()
+  (with-temp-buffer
+    (nodenv-node-version-file)))
+
 (provide 'test-nodenv)
 
 ;;; test-nodenv.el ends here
