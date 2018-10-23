@@ -61,6 +61,11 @@
   :risky t
   :package-version '(nodenv . "0.1.0"))
 
+(defsubst nodenv--trim-path-separator-r (string)
+  "Remove path separator from trailing of STRING."
+  (let ((i (string-match-p "\\(?:/\\)\\'" string)))
+    (if i (substring string 0 i) string)))
+
 (defun nodenv-version ()
   "Return currently active nodenv version."
   (getenv "NODENV_VERSION"))
@@ -80,7 +85,7 @@
          (ver-file (concat curr-dir ".node-version")))
     (if (file-exists-p ver-file)
         ver-file
-      (let ((next-dir (file-name-directory (replace-regexp-in-string "\\(?:\\/\\)\\'" "" curr-dir))))
+      (let ((next-dir (file-name-directory (nodenv--trim-path-separator-r curr-dir))))
         (when next-dir
           (nodenv-node-version-file next-dir))))))
 
